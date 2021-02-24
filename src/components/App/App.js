@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import DataList from '../DataList';
+import DataList from '../../containers/DataList';
 import getData from '../../services/data';
 import './App.css';
 
@@ -16,15 +16,11 @@ const App = () => {
   }, []);
 
   const handlerChange = (event) => {
-    setInputValue(event.target.value);
+    event.target.value === '' ? setCurrentData(initialData) : setInputValue(event.target.value);
   };
 
   const filterCheckHandler = () => {
-    if (isChecked) {
-      setChecked(false);
-    } else {
-      setChecked(true);
-    }
+    isChecked ? setChecked(false) : setChecked(true);
   };
 
   const filterLengthHandler = () => {
@@ -32,6 +28,20 @@ const App = () => {
       return;
     } else {
       setCurrentData(initialData.filter((e) => e.length >= inputValue));
+    }
+  };
+
+  const filterSubstrHandler = () => {
+    if (!isNaN(inputValue) || inputValue === '') {
+      return;
+    } else {
+      if (isChecked) {
+        setCurrentData(initialData.filter((e) => e.includes(inputValue)));
+      } else {
+        setCurrentData(
+          initialData.filter((e) => e.toLowerCase().includes(inputValue.toLowerCase())),
+        );
+      }
     }
   };
   return (
@@ -43,20 +53,27 @@ const App = () => {
             <input
               className="input is-primary"
               type="text"
-              placeholder="Primary input"
+              placeholder="Enter a number or a string"
               onChange={(e) => handlerChange(e)}
             ></input>
           </div>
           <div className="control is-flex mt-3">
-            <label className="checkbox mr-2 is-size-2">
+            <label className="checkbox mr-2 is-size-2" style={{ minWidth: '75px' }}>
               <input type="checkbox" checked={isChecked} onChange={filterCheckHandler}></input>
-              <span className="checkbox m-2 is-size-5">Filter</span>
+              <span className="checkbox m-2 is-size-5" style={{ userSelect: 'none' }}>
+                Filter
+              </span>
             </label>
-            <div className="buttons are-medium">
+            <div className="buttons are-medium is-justify-content-center">
               <button className="button is-primary is-outlined" onClick={filterLengthHandler}>
                 Filter by length
               </button>
-              <button className="button is-primary is-outlined">Filter by substr</button>
+              <button className="button is-primary is-outlined" onClick={filterSubstrHandler}>
+                Filter by substr
+              </button>
+              <span className="tag is-info is-light m-2 is-size-5">
+                Results: {currentData.length}
+              </span>
             </div>
           </div>
         </div>

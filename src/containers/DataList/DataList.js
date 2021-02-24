@@ -1,4 +1,5 @@
 import React from 'react';
+import { arrayOf, string } from 'prop-types';
 
 const DataList = ({ data }) => {
   return (
@@ -12,6 +13,10 @@ const DataList = ({ data }) => {
       })}
     </div>
   );
+};
+
+DataList.propTypes = {
+  data: arrayOf(string),
 };
 
 export default DataList;
